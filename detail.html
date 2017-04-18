@@ -1,0 +1,607 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/app.css">
+    	<link rel="stylesheet" href="../css/own.css"/>
+		<link rel="stylesheet" href="../css/iconfont.css"> 
+		<link rel="stylesheet" href="../css/iconfont_pos.css"> 	
+	</head>
+	<body>
+		<div class="mui-content mui-bg-white no-scroll">
+			<div class="mui-bar mui-bar-nav">
+				<a class="mui-action-back mui-text-gray mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<h1 class="mui-title">商品详情</h1>
+				<a id="my_cart" class="mui-text-gray det_head">
+					<span class="mui-icon mui-icon-settings "></span>
+					<span class="det_title">购物车</span>
+				</a>
+			</div>
+			<div id="pullrefresh" class="mui-m-t-header mui-scroll-wrapper no-scroll">
+				<div class="mui-scroll">
+					<div id="loadnow">
+						<div class="mui-content-padded mui-m-t-big"><a><span class="mui-spinner"></span></a></div>
+					</div>
+					<div id="product_detail" class="mui-hidden">
+						<div class="mui-pro-infos">
+							<div class="mui-content-padded">
+								<p class="mui-text-center" id="product-image">
+								</p>
+								<p class="mui-text-left" id="product-color">
+							</div>
+							<p class="product-title" id="product-title"></p>
+							<div class="mui-m-b-sm">
+								<span class="product-price" id="product-price"></span>
+								<span id="product-unit" class="mui-font-14 mui-font-bold mui-text-red"></span>
+								<del class="mui-text-normal mui-p-l" id="product-marketprice"></del>
+								
+							</div>
+							<span class="mui-text-normal">数量</span>
+							<div class="mui-numbox"  data-numbox-min='0'>
+								<button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+								<input class="mui-input-numbox" type="number" onblur="changeNumber(this)" value="1" id="pro-num"/>
+								<button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+							</div>
+							<p class="mui-text-normal mui-m-t-sm">商品型号：<span id="product-sku"></span></p>
+							<p class="mui-text-normal mui-m-t-sm">商品类别：<span id="product-cate"></span></p>
+							<p class="mui-text-normal mui-m-t-sm" id="product-guide"></p>
+							<p class="mui-text-normal mui-m-t-sm" id="product-discount"></p>
+							<p class="mui-text-normal mui-m-t-sm pro-detail-description">商品描述： <span id="product-description"></span></p>
+						</div>
+					<textarea id="sharecontent" class="mui-hidden" rows="3">商品详情</textarea>
+					<input id="sharehref" class="sharehref mui-hidden" type="url" value="" placeholder="请输入要分享的链接地址"/>
+					<input id="sharehrefTitle" class="sharehref mui-hidden" type="text" value="科勒商品详情" placeholder="要分享的链接标题"/>
+					<input id="sharehrefDes" class="sharehref mui-hidden" type="text" value="" placeholder="要分享的链接描述"/>
+					<input id="sharepicture" class="sharehref mui-hidden" type="text" value="" placeholder="要分享的链接图片"/>
+					<input type="text" class="mui-hidden" id="productids"/>
+					</div>
+				</div>
+			</div>
+			<div id="product_footer" class="mui-hidden">
+				<div class="pro-detail-footer">
+					<button class="mui-loveheart" onclick="collectByUser()"><span class="mui-icon mui-icon-flag"></span> <span id="collectstatus">关注</span></button>
+					<button class="mui-collect" onclick="addCollect()"><span class="mui-icon mui-icon-star"></span> 收藏</button>
+					<button class="mui-share" onclick="shareProduct()"><span class="mui-icon mui-icon-redo"></span> 分享</button>
+					<button class="mui-addcart" href="#" onclick="addTocart()">加入购物车</button>
+				</div>
+			</div>
+			
+			<div id="login" class="mui-modal">
+				<div class="mui-bar mui-bar-nav">
+					<a class="mui-icon mui-icon-left-nav mui-pull-left mui-text-normal" href="#login"></a>
+					<h1 class="mui-title mui-text-normal">登录</h1>
+				</div>
+				<div class="mui-content" style="height: 100%;">
+					<div class="mui-scroll-wrapper">
+						<div class="mui-scroll mui-m-t-header">
+							<div class="login_img">
+								<span class="mui-icon mui-icon-person"></span>
+							</div>
+							<div class="mui-card" style="margin-top: 20px;">
+								<form class="mui-input-group mui-m-b-none">
+									<div class="mui-input-row">
+										<label><span class="mui-icon iconfont icon-zhanghao"></span></label>
+										<input type="text" id="u_compcode" class="mui-input-clear" value="" placeholder="请输入经销商号" />
+									</div>
+									<div class="mui-input-row">
+										<label><span class="mui-icon iconfont icon-zhanghao"></span></label>
+										<input type="text" id="u_username" class="mui-input-clear" value="" placeholder="请输入手机号或邮箱" />
+									</div>
+									<div class="mui-input-row">
+										<label><span class="mui-icon iconfont icon-mimaxiugai"></span></label>
+										<input type="password"  id="u_password" class="mui-input-clear" value="" placeholder="请输入密码" />
+									</div>
+								</form>
+							</div>
+							<div class="mui-button-row" style="margin: 10px 15px;">
+								<button id="loginBtn" type="button" class="mui-btn mui-btn-green own-btn-green mui-btn-block " style="padding: 5px 0px;">登录</button>
+							</div>
+							<div class="mui-button-row" style="padding-top: 0px;">
+								<button id="register" type="button" class="mui-btn mui-btn-link mui-text-black own-font-size" style="padding-top: 0px; margin-right: 60px; ">快速注册</button>
+								<button id="repsd" type="button" class="mui-btn mui-btn-link own-font-size" style="padding-top: 0px; margin-left: 60px; color: #FF6A6A;">忘记密码</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/own.js" charset="UTF-8"></script>
+	<script src="../js/mui.zoom.js"></script>
+	<script src="../js/mui.previewimage.js"></script>
+	<script>
+		mui.init({
+			swipeBack:true
+		});
+		mui.init({
+			pullRefresh: {
+				container: '#pullrefresh',
+				down: {
+					callback: pulldownRefresh
+				}
+			}
+		});
+		//初始化scroll控件
+		mui('.mui-scroll-wrapper').scroll({
+			scrollY: true, //是否竖向滚动
+			scrollX: false, //是否横向滚动
+			startX: 0, //初始化时滚动至x
+			startY: 0, //初始化时滚动至y
+			indicators: true, //是否显示滚动条
+		});
+		/*下拉刷新具体业务实现*/
+		function pulldownRefresh() {
+			setTimeout(function() {
+				getProductDetail();
+				mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+			}, 1500);
+		}
+		
+		//登陆的点击事件
+		document.getElementById('loginBtn').addEventListener('tap',function(){
+			var username = document.getElementById('u_username');
+			var psd = document.getElementById('u_password');
+			var register = document.getElementById('register');
+			var loginWebview = plus.webview.currentWebview();
+			var toastMSG;
+			
+			//账号密码检测不能为空
+			if (username.value.length <= 0) {
+				toastMSG = '请输入账号';
+				mui.toast(toastMSG);
+				return;
+			}
+			if (psd.value.length <= 0) {
+				toastMSG = '密码不能为空';
+				mui.toast(toastMSG);
+				return;
+			}
+			var info = plus.push.getClientInfo();
+			mui.ajax(baseurl+'/jf/app/login',{
+				data:{
+					'username':username.value,'password':u_password.value,'compcode':u_compcode.value,
+					'uuid':plus.device.uuid ,'token':info.token ,'clientid':info.clientid,'devicetype':plus.device.model
+				},
+				type:'post',//HTTP请求类型
+				timeout:20000,//超时时间设置为10秒；
+				success:function(data){
+					if(data.resflag==1){
+						localStorage.setItem("user",JSON.stringify(data.resdata));
+						localStorage.setItem('compcode',u_compcode.value);
+						localStorage.setItem('account',username.value);
+						document.getElementById("login").className="mui-modal";
+						var storeid = data.resdata.storeid;
+						mui.ajax(baseurl+'/jf/app/getStoreByid',{
+							type:'post',//HTTP请求类型
+							data:{'storeid':storeid},
+							timeout:20000,//超时时间设置为20秒；
+							success:function(data){
+								localStorage.setItem("store",JSON.stringify(data));
+							},
+							error:function(xhr,type,errorThrown){
+								//异常处理；
+								console.log(type);
+								console.log(xhr);
+							}
+						});
+					}else{
+						mui.toast(data.resmsg);
+					}
+				},
+				error:function(xhr,type,errorThrown){
+					//异常处理；
+					console.log(type);
+					console.log(xhr);
+				}
+			});
+		},false);
+		
+		var shares=null,bhref=false;
+		var Intent=null,File=null,Uri=null,main=null;
+		mui.plusReady(function() {
+			updateSerivces();
+			if(plus.os.name=="Android"){
+				Intent = plus.android.importClass("android.content.Intent");
+				File = plus.android.importClass("java.io.File");
+				Uri = plus.android.importClass("android.net.Uri");
+				main = plus.android.runtimeMainActivity();
+			}
+			if (localStorage.getItem('compcode')) {
+				document.getElementById('u_compcode').value = localStorage.getItem('compcode');
+			}
+			if (localStorage.getItem('account')) {
+				document.getElementById('u_username').value = localStorage.getItem('account');
+			}
+			//console.log(plus.webview.currentWebview().getURL());
+			var productid = plus.webview.currentWebview().getURL().split('?')[1].substr(4);
+			sharehref.value=baseurl+'/wemall/shareProduct?productid='+productid;
+			productids.value=productid;
+			getProductDetail();
+		});
+		
+		//打开商品描述的pdf文件
+		mui("#product-description").on('tap','a',function(){
+			if(this.href.indexOf(".pdf")>-1){
+				if ( plus.os.name == "Android" ) {
+					plus.runtime.launchApplication( {pname:"com.android.browser"
+					,extra:{url:this.href}},
+					function ( e ) {
+						alert( "Open system default browser failed: " + e.message );
+					} );
+				} else if ( plus.os.name == "iOS" ) {
+					plus.runtime.launchApplication( {action:this.href}, 
+					function ( e ) {
+						alert( "Open system default browser failed: " + e.message );
+					} );
+				}
+			}
+		})
+		
+		//根据商品id查看商品详情
+		function getProductDetail(){
+			var user = JSON.parse(localStorage.getItem("user"));
+			var productid = plus.webview.currentWebview().getURL().split('?')[1].substr(4);
+			mui.ajax(baseurl+'/jf/app/getProDetail',{
+				//dataType:'json',//服务器返回json格式数据
+				type:'post',//HTTP请求类型
+				data:{'compid':user.compid,'productid':productid},
+				timeout:20000,//超时时间设置为10秒；
+				success:function(data){
+					var guideHtml ="";
+					var discountHtml="";
+					if(data[0]!=null){
+						//console.log("图片1"+data[0].srcdetail);
+						document.getElementById('product-image').innerHTML='<img src='+isImg(data[0].srcdetail)+' style="width:400px;height:300px;" data-preview-src="" data-preview-group="1" />';
+						if(data[0].colorsrc){
+							document.getElementById('product-color').innerHTML='<img src='+data[0].colorsrc+' style="width:60px;height:60px;" data-preview-src="" data-preview-group="1" />';
+						}
+						sharepicture.value= data[0].srcdetail;
+						if(data[0].isspecialoffer==1){
+							document.getElementById('product-title').innerHTML=data[0].productname+' <span class="product-price mui-font-16">(特价商品)</span>';
+						}else{
+							document.getElementById('product-title').innerHTML=data[0].productname;
+						}
+						sharehrefTitle.value = data[0].productname;
+						document.getElementById('product-sku').innerHTML=data[0].productcode;
+						document.getElementById('product-cate').innerHTML=data[0].categoryname;
+						document.getElementById('product-price').innerHTML='￥'+formatPrice(data[0].memberprice); //会员价
+						if(data[0].unit != ""&&data[0].unit != null){
+							document.getElementById('product-unit').innerHTML= '(元/'+data[0].unit+')';
+						}
+						//如果市场价大于会员价则显示市场价
+						if(data[0].sellprice>=data[0].memberprice&&data[0].sellprice!=null){
+							document.getElementById('product-marketprice').innerHTML='￥'+ formatPrice(data[0].sellprice);
+						}
+						//-description
+						if(data[0].description){
+							document.getElementById('product-description').innerHTML=data[0].description; //商品描述
+							sharehrefDes.value = data[0].description; 
+						}else{
+							document.getElementById('product-description').innerHTML='暂无'; //商品描述
+							sharehrefDes.value = "暂无商品描述";
+						}
+						
+						//循环导购列表
+						if(data[1].length>0){
+							var discountHtml="";
+							for(var i=0;i<data[1].length;i++){
+								guideHtml += '</br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a id='+data[1][i].ids+' class="mui-text-warning">'+[i+1]+'. '+ data[1][i].name+'</a>';
+							}
+						    document.getElementById('product-guide').innerHTML='导购：'+guideHtml;
+						}
+						//促销列表
+						if(data[2].length>0){
+							var discountHtml="";
+							for(var i=0;i<data[2].length;i++){
+								if(data[0].isspecialoffer==0){
+									discountHtml += '</br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a id='+data[2][i].ids+'  class="mui-text-warning">'+[i+1]+'. '+ data[2][i].name+'</a>';
+								}
+							}
+							if(discountHtml!=""){
+						    	document.getElementById('product-discount').innerHTML='促销：'+discountHtml;
+						   }
+						}
+						//判断商品是否已关注
+						var producthis =JSON.parse(localStorage.getItem("producthis"));
+						var cflag = false;
+						if(producthis!=null){
+							for(var i=0; i<producthis.length; i++){
+								if(producthis[i].id == productids.value){
+									cflag=true;
+								}
+							}
+						}
+						if(cflag){
+							document.getElementById("collectstatus").innerHTML="已关注";
+						}else{
+							document.getElementById("collectstatus").innerHTML="关注";
+						}
+						document.getElementById('product_detail').className = "";
+						document.getElementById('product_footer').className = "";
+					}else{
+						mui.toast("抱歉，商品不存在");
+					}
+					
+					document.getElementById("loadnow").className="mui-hidden";
+				},
+				error:function(xhr,type,errorThrown){
+					document.getElementById("loadnow").className="mui-hidden";
+					mui.toast("抱歉，页面加载失败");
+					console.log(type);
+					console.log(xhr);
+				}
+			});
+		}
+		
+		//金额转化
+		function formatPrice (num) {
+		    return (parseInt(num) + '').replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, '$&,');
+		}
+
+		//点击查看导购详情
+		mui("#product-guide").on('tap','a',function(){
+		    var ids = this.getAttribute("id");
+			mui.openWindow({
+			    id:'guide_detail',
+			    url:'../main/guide_detail.html?ids='+ids
+			});
+		})
+		
+		//点击查看促销详情
+		mui("#product-discount").on('tap','a',function(){
+		    var ids = this.getAttribute("id");
+		    //alert(ids);
+			mui.openWindow({
+			    id:'discount_detail',
+			    url:'../main/discount_detail.html?ids='+ids,
+			});
+		})
+		
+		//点击购物车按钮打开购物车页面
+		document.getElementById('my_cart').addEventListener('tap', function() {
+		  mui.openWindow({
+		    url: '../main/mycart.html', 
+		    id:'my_cart'
+		  });
+		
+		});
+		
+		function changeNumber(obj) {
+			var count = parseFloat(obj.value).toFixed(2);
+			document.getElementById('pro-num').value = count;
+		}
+		
+		//商品加入购物车
+		function addTocart(){
+			var productid = productids.value;
+			var user=JSON.parse(localStorage.getItem("user"));
+			var customer=JSON.parse(localStorage.getItem("customer"));
+			if(user!=null){
+				if(customer!=null){
+					mui.ajax(baseurl+'/jf/app/addToCart',{
+						//dataType:'json',//服务器返回json格式数据
+						type:'post',//HTTP请求类型
+						data:{
+							'compid':user.compid,'productid':productid,'count':document.getElementById('pro-num').value,'custid':customer.ids
+						},
+						timeout:20000,//超时时间设置为10秒；
+						success:function(data){
+							mui.toast("商品添加成功");
+							//mui.alert('商品添加成功', '温馨提示', function() {});
+							//mui.toast('商品添加成功');
+						},
+						error:function(xhr,type,errorThrown){
+							//异常处理
+							console.log(type);
+							console.log(xhr);
+						}
+					});
+				}else{
+					mui.toast("请先选择会员");
+				}
+			}else{
+				document.getElementById("login").className="mui-modal mui-active";
+			}
+		}
+		
+		//商品添加关注
+		function collectByUser(){
+			var user=JSON.parse(localStorage.getItem("user"));
+			if(user!=null){
+				var product={};
+			    product.id=productids.value;
+			    var collectstatus = document.getElementById("collectstatus").innerHTML;
+			    if(collectstatus=="关注"){
+			    	product.name = document.getElementById('product-title').innerHTML;
+					product.sku = document.getElementById('product-sku').innerHTML;
+					setProducthis(product);
+					document.getElementById("collectstatus").innerHTML="已关注";
+					mui.toast("添加关注成功");
+			    }else{
+			    	var producthis =JSON.parse(localStorage.getItem("producthis"));
+					var productArr = new Array();
+					if(producthis!=null){
+						productArr = producthis;
+						var index=-1;
+						for(var i=0;i<productArr.length;i++){  //判断该元素是否在数组中已存在，存在返回数组下标
+							if(productArr[i].id == product.id){
+								index = i;
+							}
+						}
+						if(index>-1){
+							productArr.splice(index,1);  //删除已存在元素
+						}
+						if(productArr.length>0){
+							localStorage.setItem("producthis",JSON.stringify(productArr));
+						}else{
+							localStorage.setItem("producthis",null);
+						}
+						
+					}
+					document.getElementById("collectstatus").innerHTML="关注";
+			    	mui.toast("取消关注成功");
+			    }
+					
+			}else{
+				document.getElementById("login").className="mui-modal mui-active";
+			}
+			
+		}
+		
+		//将关注商品加入本地缓存
+		function setProducthis(product){
+			var producthis =JSON.parse(localStorage.getItem("producthis"));
+			var productArr = new Array();
+			if(producthis!=null){
+				productArr = producthis;
+				var index=-1;
+				for(var i=0;i<productArr.length;i++){  //判断该元素是否在数组中已存在，存在返回数组下标
+					if(productArr[i].id == product.id){
+						index = i;
+					}
+				}
+				if(index>-1){
+					productArr.splice(index,1);  //删除已存在元素
+				}
+				var prolength = productArr.length;
+				if(prolength>=10){ //数组长度大于等于10则删除数组第一项
+					productArr.shift();
+				}
+			}
+			productArr.push(product);  //将元素插入到数组末尾
+			localStorage.setItem("producthis",JSON.stringify(productArr));
+		}
+		
+		//添加收藏
+		function addCollect(){
+			var user=JSON.parse(localStorage.getItem("user"));
+			var productid = productids.value;
+			var customer =JSON.parse(localStorage.getItem("customer"));
+			if(user!=null){
+				if(customer!=null){
+					mui.ajax(baseurl+'/jf/app/addCollectPro',{
+						type:'post',//HTTP请求类型
+						data:{
+							'compid':user.compid,"productid":productid,"custid":customer.ids,
+						},
+						//timeout:20000,//超时时间设置为10秒；
+						success:function(data){
+							mui.toast(data.resmsg);
+						},
+						error:function(xhr,type,errorThrown){
+							//异常处理
+							console.log(type);
+							console.log(xhr);
+						}
+					});
+				}else{
+					mui.toast("请先选择会员");
+				}
+			}else{
+				document.getElementById("login").className="mui-modal mui-active";
+			}
+		
+		}
+		
+		/**更新分享服务*/
+		function updateSerivces(){
+			plus.share.getServices( function(s){
+				shares={};
+				for(var i in s){
+					var t=s[i];
+					shares[t.id]=t;
+				}
+			}, function(e){
+				console.log( "获取分享服务列表失败："+e.message );
+			} );
+		}
+		
+		/**
+		   * 发送分享消息
+		   * @param {plus.share.ShareService}
+		   */
+		function shareMessage(s,ex){
+			var msg={content:sharehrefDes.value,extra:{scene:ex}};
+			if(bhref){
+				msg.href=sharehref.value;
+				if(sharehrefTitle&&sharehrefTitle.value!=""){
+					msg.title=sharehrefTitle.value;
+				}
+				//alert(sharehrefDes.value);
+				if(sharehrefDes&&sharehrefDes.value!=""){
+					msg.content=sharehrefDes.value;
+				}
+				msg.thumbs="["+sharepicture.value+"]";
+				msg.pictures="["+sharepicture.value+"]";
+				//alert(msg.thumbs);
+			}else{
+				if(pic&&pic.realUrl){
+					msg.pictures=[pic.realUrl];
+				}
+			}
+			console.log(JSON.stringify(msg));
+			s.send( msg, function(){
+				console.log( "分享到\""+s.description+"\"成功！ " );
+			}, function(e){
+				console.log( "分享到\""+s.description+"\"失败: "+e.code+" - "+e.message );
+			} );
+		}
+		
+		// 分享商品
+		function shareProduct(){
+			var user=JSON.parse(localStorage.getItem("user"));
+			if(user!=null){
+				bhref=true;
+				var ids=[{id:"weixin",ex:"WXSceneSession"},{id:"weixin",ex:"WXSceneTimeline"},{id:"qq"}],
+				bts=[{title:"发送给微信好友"},{title:"分享到微信朋友圈"}];
+				plus.nativeUI.actionSheet({cancel:"取消",buttons:bts},
+					function(e){
+						var i=e.index;
+						if(i>0){
+							shareAction(ids[i-1].id,ids[i-1].ex);
+						}
+					}
+				);
+			}else{
+				document.getElementById("login").className="mui-modal mui-active";
+			}
+		}
+		function shareAction(id,ex) {
+			var s=null;
+			console.log( "分享操作：" );
+			if(!id||!(s=shares[id])){
+				console.log( "无效的分享服务！" );
+				return;
+			}
+			if ( s.authenticated ) {
+				console.log( "---已授权---" );
+				shareMessage(s,ex);
+			} else {
+				console.log( "---未授权---" );
+				s.authorize( function(){
+						shareMessage(s,ex);
+					},function(e){
+					console.log( "认证授权失败："+e.code+" - "+e.message );
+				});
+			}
+		}
+		
+		function isImg(src){
+			//console.log("详细页图片"+src);
+			if(src!= null&&src.indexOf("http")>-1){
+				return src;
+			}else if(src!= null&&src.indexOf("http")==-1){
+				return baseurl+src;
+			}else{
+				return src;
+			}
+		}
+	</script>
+
+</html>
